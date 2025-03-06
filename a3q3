@@ -1,0 +1,35 @@
+import numpy as np
+from scipy.integrate import solve_ivp
+import matplotlib.pyplot as plt
+
+
+def competition_model(t, populations):
+    x, y = populations
+    dxdt = x * (2 - 0.4 * x - 0.3 * y)
+    dydt = y * (1 - 0.1 * y - 0.3 * x)
+    return [dxdt, dydt]
+
+initial_conditions = {
+    'a': [1.5, 3.5],
+    'b': [1, 1],
+    'c': [2, 7],
+    'd': [4.5, 0.5]
+}
+
+
+t_span = (0, 50)
+t_eval = np.linspace(0, 50, 500)
+
+
+for case, initial_pop in initial_conditions.items():
+    sol = solve_ivp(competition_model, t_span, initial_pop, t_eval=t_eval)
+    
+    plt.figure()
+    plt.plot(sol.t, sol.y[0], label='x(t)')
+    plt.plot(sol.t, sol.y[1], label='y(t)')
+    plt.xlabel('Time (years)')
+    plt.ylabel('Population (thousands)')
+    plt.title(f'Case {case}: x(0)={initial_pop[0]}, y(0)={initial_pop[1]}')
+    plt.legend()
+    plt.grid(True)
+    plt.show() 
